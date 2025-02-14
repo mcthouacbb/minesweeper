@@ -12,9 +12,12 @@ project(Minesweeper)
 set(SRCS
     "src/util/static_vector.h"
 
+    "src/board_image.cpp"
+    "src/board_image.h"
     "src/board.cpp"
     "src/board.h"
     "src/main.cpp"
+    "src/types.h"
 )
 
 
