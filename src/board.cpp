@@ -25,7 +25,7 @@ void Board::genMines(uint32_t numMines)
 	m_Data.numMines = numMines;
 }
 
-BoardImage Board::genImage()
+BoardImage Board::genImage() const
 {
 	constexpr std::pair<int, int> offsets[] = {
 		{-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}

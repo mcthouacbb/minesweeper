@@ -23,7 +23,7 @@ public:
 	uint32_t width() const;
 	uint32_t height() const;
 	uint32_t numMines() const;
-	BoardImage genImage();
+	BoardImage genImage() const;
 private:
 	BoardData m_Data;
 	std::vector<CellState> m_Cells;
