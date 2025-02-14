@@ -12,12 +12,20 @@ enum class CellState : uint8_t
 	CLEARED
 };
 
+enum class MoveResult
+{
+	ILLEGAL,
+	CLEAR,
+	MINE
+};
+
 class Board
 {
 public:
 	Board(uint32_t width, uint32_t height);
 
 	void genMines(uint32_t numMines);
+	MoveResult makeMove(Point move);
 
 	CellState cell(Point pt) const;
 	uint32_t width() const;
@@ -25,6 +33,8 @@ public:
 	uint32_t numMines() const;
 	BoardImage genImage() const;
 private:
+	void clearCells(Point location);
+
 	BoardData m_Data;
 	std::vector<CellState> m_Cells;
 };

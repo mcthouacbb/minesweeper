@@ -25,11 +25,55 @@ void Board::genMines(uint32_t numMines)
 	m_Data.numMines = numMines;
 }
 
+MoveResult Board::makeMove(Point move)
+{
+	if (cell(move) == CellState::CLEARED)
+		return MoveResult::ILLEGAL;
+	if (cell(move) == CellState::MINE)
+		return MoveResult::MINE;
+
+	clearCells(move);
+	
+	return MoveResult::CLEAR;
+}
+
+constexpr std::pair<int, int> neighborOffsets[] = {
+	{-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}
+};
+
+void Board::clearCells(Point location)
+{
+	if (cell(location) != CellState::UNCLEARED)
+		return;
+
+	m_Cells[location.x + width() * location.y] = CellState::CLEARED;
+
+	bool hasAdjacentMine = false;
+	for (auto offset : neighborOffsets)
+	{
+		Point pt{offset.first + location.x, offset.second + location.y};
+		if (pt.x < 0 || pt.x >= width() || pt.y < 0 || pt.y >= height())
+			continue;
+		if (cell(pt) == CellState::MINE)
+		{
+			hasAdjacentMine = true;
+			break;
+		}
+	}
+	if (hasAdjacentMine)
+		return;
+		
+	for (auto offset : neighborOffsets)
+	{
+		Point pt{offset.first + location.x, offset.second + location.y};
+		if (pt.x < 0 || pt.x >= width() || pt.y < 0 || pt.y >= height())
+			continue;
+		clearCells(pt);
+	}
+}
+
 BoardImage Board::genImage() const
 {
-	constexpr std::pair<int, int> offsets[] = {
-		{-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}
-	};
 	BoardImage result{m_Data};
 	for (uint32_t y = 0; y < height(); y++)
 	{
@@ -39,7 +83,7 @@ BoardImage Board::genImage() const
 				continue;
 			CellInfo cellInfo = {};
 			cellInfo.location = {x, y};
-			for (auto offset : offsets)
+			for (auto offset : neighborOffsets)
 			{
 				Point pt{offset.first + x, offset.second + y};
 				if (pt.x < 0 || pt.x >= width() || pt.y < 0 || pt.y >= height())
