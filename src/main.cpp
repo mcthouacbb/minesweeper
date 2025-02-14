@@ -6,5 +6,6 @@ int main()
     Board board(10, 5);
     board.genMines(20);
     std::cout << board << std::endl;
+    std::cout << board.genImage() << std::endl;
     return 0;
 }
