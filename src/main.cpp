@@ -1,7 +1,10 @@
 #include <iostream>
+#include "board.h"
 
 int main()
 {
-    std::cout << "Hello World!" << std::endl;
+    Board board(10, 5);
+    board.genMines(20);
+    std::cout << board << std::endl;
     return 0;
 }

@@ -10,6 +10,8 @@ endif()
 project(Minesweeper)
 
 set(SRCS
+    "src/board.cpp"
+    "src/board.h"
     "src/main.cpp"
 )
 
