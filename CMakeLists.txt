@@ -12,6 +12,8 @@ project(Minesweeper)
 set(SRCS
     "src/solver/augmented_matrix.cpp"
     "src/solver/augmented_matrix.h"
+    "src/solver/linear_system.h"
+    "src/solver/solver.h"
 
     "src/util/static_vector.h"
 

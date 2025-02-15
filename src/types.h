@@ -13,7 +13,7 @@ struct Point
 
 struct PointHash
 {
-    size_t operator()(const Point& pt)
+    size_t operator()(const Point& pt) const
     {
         return std::hash<uint64_t>{}(static_cast<uint64_t>(pt.x) | (static_cast<uint64_t>(pt.y) << 32));
     }

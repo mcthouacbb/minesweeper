@@ -1,10 +1,11 @@
 #include <iostream>
+#include "solver/solver.h"
 #include "board.h"
 #include "solver/augmented_matrix.h"
 
 int main()
 {
-    AugmentedMatrix matrix{5, 5};
+    /*AugmentedMatrix matrix{5, 5};
     matrix[0][0] = 1;
     matrix[0][1] = 1;
     matrix[0][5] = 1;
@@ -18,7 +19,7 @@ int main()
     matrix[4][5] = 1;
     std::cout << matrix << std::endl;
     matrix.solve();
-    std::cout << matrix << std::endl;
+    std::cout << matrix << std::endl;*/
     /*Board board(20, 10);
     board.genMines(40);
     std::cout << board << std::endl;
@@ -35,5 +36,15 @@ int main()
     board.makeMove({11, 9});
     std::cout << board << std::endl;
     std::cout << board.genImage() << std::endl;*/
+
+    Board board(12, 10);
+    board.genMines(30);
+    board.makeMove({0, 9});
+    std::cout << board << std::endl;
+
+    auto image = board.genImage();
+    std::cout << image << std::endl;
+    Solver solver(image);
+    solver.solve();
     return 0;
 }
