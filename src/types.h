@@ -11,6 +11,14 @@ struct Point
     constexpr bool operator!=(const Point& other) const noexcept = default;
 };
 
+struct PointHash
+{
+    size_t operator()(const Point& pt)
+    {
+        return std::hash<uint64_t>{}(static_cast<uint64_t>(pt.x) | (static_cast<uint64_t>(pt.y) << 32));
+    }
+};
+
 struct BoardData
 {
     uint32_t width;

@@ -10,6 +10,9 @@ endif()
 project(Minesweeper)
 
 set(SRCS
+    "src/solver/augmented_matrix.cpp"
+    "src/solver/augmented_matrix.h"
+
     "src/util/static_vector.h"
 
     "src/board_image.cpp"
