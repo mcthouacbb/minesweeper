@@ -38,6 +38,8 @@ public:
     Equation& addEquation();
 
     AugmentedMatrix toAugmentedMatrix(uint32_t numVariables) const;
+
+    const std::vector<Equation>& equations() const;
 private:
     std::vector<Equation> m_Equations;
 };
@@ -78,4 +80,9 @@ inline AugmentedMatrix LinearSystem::toAugmentedMatrix(uint32_t numVariables) co
         rowIdx++;
     }
     return result;
+}
+
+const std::vector<Equation>& LinearSystem::equations() const
+{
+    return m_Equations;
 }

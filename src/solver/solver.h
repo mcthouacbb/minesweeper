@@ -32,32 +32,8 @@ public:
 
 	void solve();
 private:
+	void extractInfo(const LinearSystem& solved);
+
 	const BoardImage& m_Image;
-
+	VarTable m_VarTable;
 };
-
-inline Solver::Solver(const BoardImage& image)
-	: m_Image(image)
-{
-
-}
-
-inline void Solver::solve()
-{
-	VarTable varTable;
-	LinearSystem topLevelSystem = {};
-	for (auto& cell : m_Image.numberedCells())
-	{
-		auto& equation = topLevelSystem.addEquation();
-		for (auto neighbor : cell.unclearedNeighbors)
-			equation.addTerm(1, varTable.varID(neighbor));
-		equation.setRHS(cell.adjacentMines);
-	}
-
-	AugmentedMatrix matrix = topLevelSystem.toAugmentedMatrix(varTable.size());
-	std::cout << matrix << std::endl;
-	matrix.solve();
-	std::cout << matrix << std::endl;
-	LinearSystem solved(matrix);
-	
-}
