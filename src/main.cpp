@@ -1,4 +1,5 @@
 #include "board.h"
+#include "solvers/brute_force.h"
 #include <iostream>
 
 int main()
@@ -8,16 +9,24 @@ int main()
     std::cout << board << std::endl;
     std::cout << board.genImage() << std::endl;
 
+    solvers::brute_force::solve(board.genImage());
+
     board.makeMove({7, 6});
     std::cout << board << std::endl;
     std::cout << board.genImage() << std::endl;
+
+    solvers::brute_force::solve(board.genImage());
 
     board.makeMove({4, 4});
     std::cout << board << std::endl;
     std::cout << board.genImage() << std::endl;
 
+    solvers::brute_force::solve(board.genImage());
+
     board.makeMove({11, 9});
     std::cout << board << std::endl;
     std::cout << board.genImage() << std::endl;
+
+    solvers::brute_force::solve(board.genImage());
     return 0;
 }
