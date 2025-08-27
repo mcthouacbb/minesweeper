@@ -3,7 +3,6 @@
 BoardImage::BoardImage(const BoardData& data)
     : m_Data(data)
 {
-
 }
 
 bool BoardImage::cellCleared(Point pt) const

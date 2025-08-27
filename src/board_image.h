@@ -1,9 +1,9 @@
 #pragma once
 
-#include <vector>
-#include <ostream>
 #include "types.h"
 #include "util/static_vector.h"
+#include <ostream>
+#include <vector>
 
 struct CellInfo
 {
@@ -26,6 +26,7 @@ public:
     uint32_t width() const;
     uint32_t height() const;
     uint32_t numMines() const;
+
 private:
     BoardData m_Data;
     std::vector<CellInfo> m_NumberedCells;

@@ -1,9 +1,9 @@
 #pragma once
 
-#include <vector>
+#include "board_image.h"
 #include <cstdint>
 #include <ostream>
-#include "board_image.h"
+#include <vector>
 
 enum class CellState : uint8_t
 {
@@ -32,6 +32,7 @@ public:
     uint32_t height() const;
     uint32_t numMines() const;
     BoardImage genImage() const;
+
 private:
     void clearCells(Point location);
 
@@ -60,4 +61,3 @@ inline uint32_t Board::numMines() const
 {
     return m_Data.numMines;
 }
-
