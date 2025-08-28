@@ -90,13 +90,15 @@ std::string getTestPosStr(const BoardImage& image, const SolutionInfo& solutionI
 void generateTestSuite()
 {
     std::random_device rd;
-    std::mt19937 gen(rd());
+    auto seed = rd();
+    std::mt19937 gen(seed);
+    std::cout << "Seed for generating test suite: " << seed << std::endl;
     // std::mt19937 gen(283473842);
     std::string easyCases = "std::vector<TestPosition> easyCases = {";
     std::string mediumCases = "std::vector<TestPosition> mediumCases = {";
     std::string hardCases = "std::vector<TestPosition> hardCases = {";
 
-    for (uint32_t i = 0; i < 15; i++)
+    for (uint32_t i = 0; i < 100; i++)
     {
         Board board{15, 15};
         board.genMines(40, gen);
