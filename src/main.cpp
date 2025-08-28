@@ -78,9 +78,11 @@ int main()
     // tryRenderSolution(builder2.build());
     // std::cout << builder2.build() << std::endl;
 
-    generateTestSuite();
+    // generateTestSuite();
 
     run_test_suite(TestSuite::EASY);
+    run_test_suite(TestSuite::MEDIUM);
+    run_test_suite(TestSuite::HARD);
 
     return 0;
 }
