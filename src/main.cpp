@@ -1,5 +1,6 @@
 #include "board.h"
 #include "solvers/brute_force.h"
+#include "test_suite.h"
 #include "test_suite_gen.h"
 #include <iostream>
 
@@ -77,7 +78,8 @@ int main()
     // tryRenderSolution(builder2.build());
     // std::cout << builder2.build() << std::endl;
 
-    generateTestSuite();
+    // generateTestSuite();
+    run_test_suite(TestSuite::EASY);
 
     return 0;
 }

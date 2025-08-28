@@ -1,16 +1,10 @@
 #include "board.h"
 #include "solvers/brute_force.h"
+#include "test_suite.h"
 
 #include <chrono>
 #include <random>
 #include <string>
-
-struct TestPosition
-{
-    BoardData data;
-    std::vector<std::pair<Point, uint32_t>> clearedCells;
-    SolutionInfo solutionInfo;
-};
 
 void clearRandomCell(Board& board, std::mt19937& gen)
 {
