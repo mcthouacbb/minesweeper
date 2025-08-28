@@ -23,7 +23,7 @@ struct Constraint
     }
 };
 
-inline std::optional<SolutionInfo> solve(const BoardImage& image)
+inline std::optional<SolutionInfo> solve(const BoardImage& image, uint32_t maxUncleared = 35)
 {
     std::unordered_map<Point, uint32_t, PointHash> unclearedIndices;
     std::vector<Point> uncleared;
@@ -51,7 +51,7 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
         constraints.push_back(constraint);
     }
 
-    if (uncleared.size() >= 40)
+    if (uncleared.size() >= maxUncleared)
         return {};
 
     uint64_t alwaysMines = (1ull << uncleared.size()) - 1;

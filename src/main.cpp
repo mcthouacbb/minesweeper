@@ -1,5 +1,7 @@
 #include "board.h"
 #include "solvers/brute_force.h"
+#include "test_suite.h"
+#include "test_suite_gen.h"
 #include <iostream>
 
 void tryRenderSolution(const BoardImage& image)
@@ -12,69 +14,75 @@ void tryRenderSolution(const BoardImage& image)
 
 int main()
 {
-    Board board(20, 10);
-    board.genMines(40);
-    std::cout << board << std::endl;
-    std::cout << board.genImage() << std::endl;
-
-    tryRenderSolution(board.genImage());
-
-    board.makeMove({7, 6});
-    std::cout << board << std::endl;
-    std::cout << board.genImage() << std::endl;
-
-    tryRenderSolution(board.genImage());
-
-    board.makeMove({4, 4});
-    std::cout << board << std::endl;
-    std::cout << board.genImage() << std::endl;
-
-    tryRenderSolution(board.genImage());
-
-    // board.makeMove({11, 9});
+    // Board board(20, 10);
+    // board.genMines(40);
     // std::cout << board << std::endl;
     // std::cout << board.genImage() << std::endl;
 
     // tryRenderSolution(board.genImage());
 
-    BoardImageBuilder builder({15, 15, 35});
-    builder.addClearedCell({3, 3}, 0);
-    builder.addClearedCell({4, 3}, 0);
-    builder.addClearedCell({3, 4}, 0);
-    builder.addClearedCell({4, 4}, 0);
+    // board.makeMove({7, 6});
+    // std::cout << board << std::endl;
+    // std::cout << board.genImage() << std::endl;
 
-    builder.addClearedCell({2, 2}, 2);
-    builder.addClearedCell({3, 2}, 1);
-    builder.addClearedCell({4, 2}, 1);
-    builder.addClearedCell({5, 2}, 2);
+    // tryRenderSolution(board.genImage());
 
-    builder.addClearedCell({2, 3}, 1);
-    builder.addClearedCell({5, 3}, 2);
+    // board.makeMove({4, 4});
+    // std::cout << board << std::endl;
+    // std::cout << board.genImage() << std::endl;
 
-    builder.addClearedCell({2, 4}, 1);
-    builder.addClearedCell({5, 4}, 2);
+    // tryRenderSolution(board.genImage());
 
-    builder.addClearedCell({2, 5}, 2);
-    builder.addClearedCell({3, 5}, 1);
-    builder.addClearedCell({4, 5}, 1);
-    builder.addClearedCell({5, 5}, 2);
+    // // board.makeMove({11, 9});
+    // // std::cout << board << std::endl;
+    // // std::cout << board.genImage() << std::endl;
 
-    builder.addClearedCell({5, 6}, 1);
-    builder.addClearedCell({6, 6}, 2);
-    builder.addClearedCell({5, 7}, 2);
-    builder.addClearedCell({4, 8}, 2);
+    // // tryRenderSolution(board.genImage());
 
-    tryRenderSolution(builder.build());
+    // BoardImageBuilder builder({15, 15, 35});
+    // builder.addClearedCell({3, 3}, 0);
+    // builder.addClearedCell({4, 3}, 0);
+    // builder.addClearedCell({3, 4}, 0);
+    // builder.addClearedCell({4, 4}, 0);
 
-    std::cout << builder.build() << std::endl;
+    // builder.addClearedCell({2, 2}, 2);
+    // builder.addClearedCell({3, 2}, 1);
+    // builder.addClearedCell({4, 2}, 1);
+    // builder.addClearedCell({5, 2}, 2);
 
-    BoardImageBuilder builder2({8, 6, 8});
-    builder2.addClearedCell({2, 2}, 3);
-    builder2.addClearedCell({4, 3}, 2);
-    builder2.addClearedCell({1, 5}, 1);
+    // builder.addClearedCell({2, 3}, 1);
+    // builder.addClearedCell({5, 3}, 2);
 
-    tryRenderSolution(builder2.build());
-    std::cout << builder2.build() << std::endl;
+    // builder.addClearedCell({2, 4}, 1);
+    // builder.addClearedCell({5, 4}, 2);
+
+    // builder.addClearedCell({2, 5}, 2);
+    // builder.addClearedCell({3, 5}, 1);
+    // builder.addClearedCell({4, 5}, 1);
+    // builder.addClearedCell({5, 5}, 2);
+
+    // builder.addClearedCell({5, 6}, 1);
+    // builder.addClearedCell({6, 6}, 2);
+    // builder.addClearedCell({5, 7}, 2);
+    // builder.addClearedCell({4, 8}, 2);
+
+    // tryRenderSolution(builder.build());
+
+    // std::cout << builder.build() << std::endl;
+
+    // BoardImageBuilder builder2({8, 6, 8});
+    // builder2.addClearedCell({2, 2}, 3);
+    // builder2.addClearedCell({4, 3}, 2);
+    // builder2.addClearedCell({1, 5}, 1);
+
+    // tryRenderSolution(builder2.build());
+    // std::cout << builder2.build() << std::endl;
+
+    // generateTestSuite();
+
+    run_test_suite(TestSuite::EASY);
+    run_test_suite(TestSuite::MEDIUM);
+    run_test_suite(TestSuite::HARD);
 
     return 0;
 }

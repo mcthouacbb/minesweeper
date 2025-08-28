@@ -30,6 +30,7 @@ public:
     uint32_t numMines() const;
 
     const std::vector<CellInfo>& numberedCells() const;
+    const std::vector<Point>& zeroCells() const;
 
     std::string renderSolution(const SolutionInfo& solution) const;
 
@@ -69,6 +70,11 @@ inline uint32_t BoardImage::numMines() const
 inline const std::vector<CellInfo>& BoardImage::numberedCells() const
 {
     return m_NumberedCells;
+}
+
+inline const std::vector<Point>& BoardImage::zeroCells() const
+{
+    return m_ZeroCells;
 }
 
 class BoardImageBuilder

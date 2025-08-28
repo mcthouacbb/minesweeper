@@ -2,27 +2,29 @@
 #include <algorithm>
 #include <iterator>
 #include <numeric>
-#include <random>
-
 
 Board::Board(uint32_t width, uint32_t height)
     : m_Data{width, height}, m_Cells(width * height, CellState::UNCLEARED)
 {
 }
 
-void Board::genMines(uint32_t numMines)
+void Board::genMines(uint32_t numMines, std::mt19937& gen)
 {
-    static std::mt19937 rng{384747};
-
     std::vector<uint32_t> nums(width() * height());
     std::iota(nums.begin(), nums.end(), 0);
     std::vector<uint32_t> result;
-    std::sample(nums.begin(), nums.end(), std::back_inserter(result), numMines, rng);
+    std::sample(nums.begin(), nums.end(), std::back_inserter(result), numMines, gen);
 
     std::fill(m_Cells.begin(), m_Cells.end(), CellState::UNCLEARED);
     for (uint32_t i : result)
         m_Cells[i] = CellState::MINE;
     m_Data.numMines = numMines;
+}
+
+void Board::genMines(uint32_t numMines)
+{
+    static std::mt19937 rng{384747};
+    genMines(numMines, rng);
 }
 
 MoveResult Board::makeMove(Point move)
