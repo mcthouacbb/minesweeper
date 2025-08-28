@@ -3,6 +3,14 @@
 
 #include <chrono>
 #include <random>
+#include <string>
+
+struct TestPosition
+{
+    BoardData data;
+    std::vector<std::pair<Point, uint32_t>> clearedCells;
+    SolutionInfo solutionInfo;
+};
 
 void clearRandomCell(Board& board, std::mt19937& gen)
 {
@@ -16,9 +24,78 @@ void clearRandomCell(Board& board, std::mt19937& gen)
     } while (result != MoveResult::CLEAR);
 }
 
+std::string getTestPosStr(const BoardImage& image, const SolutionInfo& solutionInfo)
+{
+    std::string result = "    {\n";
+    result += "        {";
+    result += std::to_string(image.width()) + ", ";
+    result += std::to_string(image.height()) + ", ";
+    result += std::to_string(image.numMines()) + "},\n";
+
+    result += "        {";
+    bool first = true;
+    for (Point zeroCell : image.zeroCells())
+    {
+        if (!first)
+            result += ", ";
+        result += "{{";
+        result += std::to_string(zeroCell.x) + ", ";
+        result += std::to_string(zeroCell.y) + "}, 0}";
+        first = false;
+    }
+
+    for (CellInfo numberedCell : image.numberedCells())
+    {
+        if (!first)
+            result += ", ";
+        result += "{{";
+        result += std::to_string(numberedCell.location.x) + ", ";
+        result += std::to_string(numberedCell.location.y) + "}, ";
+        result += std::to_string(numberedCell.adjacentMines) + "}";
+        first = false;
+    }
+    result += "},\n";
+
+    result += "        {\n";
+    result += "            {";
+    first = true;
+    for (Point mine : solutionInfo.mines)
+    {
+        if (!first)
+            result += ", ";
+        result += "{";
+        result += std::to_string(mine.x) + ", ";
+        result += std::to_string(mine.y) + "}";
+        first = false;
+    }
+    result += "},\n";
+    result += "            {";
+    first = true;
+    for (Point clear : solutionInfo.clears)
+    {
+        if (!first)
+            result += ", ";
+        result += "{";
+        result += std::to_string(clear.x) + ", ";
+        result += std::to_string(clear.y) + "}";
+        first = false;
+    }
+    result += "},\n";
+    result += "            " + std::to_string(solutionInfo.numValidSolutions) + "\n        }\n";
+    result += "    }";
+
+    return result;
+}
+
 void generateTestSuite()
 {
-    std::mt19937 gen(283473842);
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    // std::mt19937 gen(283473842);
+    std::string easyCases = "std::vector<TestPosition> easyCases = {";
+    std::string mediumCases = "std::vector<TestPosition> mediumCases = {";
+    std::string hardCases = "std::vector<TestPosition> hardCases = {";
+
     for (uint32_t i = 0; i < 15; i++)
     {
         Board board{15, 15};
@@ -48,15 +125,36 @@ void generateTestSuite()
 
         double seconds = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count();
         std::cout << "Took " << seconds << " seconds to find the solution: ";
-        if (seconds < 0.01)
-            std::cout << "very easy solve" << std::endl;
-        else if (seconds < 0.1)
-            std::cout << "easy solve" << std::endl;
-        else if (seconds < 1)
-            std::cout << "medium solve" << std::endl;
-        else
-            std::cout << "hard solve" << std::endl;
+
+        std::string& result = [&]() -> std::string&
+        {
+            if (seconds < 0.1)
+            {
+                std::cout << "easy solve" << std::endl;
+                return easyCases;
+            }
+            else if (seconds < 1)
+            {
+                std::cout << "medium solve" << std::endl;
+                return mediumCases;
+            }
+            else
+            {
+                std::cout << "hard solve" << std::endl;
+                return hardCases;
+            }
+        }();
+
+        if (i > 0)
+            result += ",";
+        result += "\n" + getTestPosStr(image, solution.value());
 
         std::cout << std::endl;
     }
+    easyCases += "\n};\n";
+    mediumCases += "\n};\n";
+    hardCases += "\n};\n";
+    std::cout << easyCases << std::endl;
+    std::cout << mediumCases << std::endl;
+    std::cout << hardCases << std::endl;
 }
