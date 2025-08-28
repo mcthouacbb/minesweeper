@@ -2,6 +2,7 @@
 #include "raw_test_data.h"
 #include "solvers/brute_force.h"
 
+#include <chrono>
 #include <unordered_set>
 
 TestPosition TestPosition::fromImage(const BoardImage& image, const SolutionInfo& solution)
@@ -34,6 +35,8 @@ void run_test_suite(TestSuite suite)
                 throw std::runtime_error("Invalid test case");
         }
     }();
+
+    auto t1 = std::chrono::steady_clock::now();
 
     for (const auto& pos : positions)
     {
@@ -69,4 +72,9 @@ void run_test_suite(TestSuite suite)
                       << std::endl;
         }
     }
+
+    auto t2 = std::chrono::steady_clock::now();
+    double seconds = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count();
+    std::cout << "Test suite took " << seconds << " seconds. " << positions.size() / seconds
+              << " cases/sec" << std::endl;
 }
