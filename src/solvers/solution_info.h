@@ -4,10 +4,11 @@
 
 #include "../types.h"
 
-struct Solution
+struct SolutionInfo
 {
     std::vector<Point> mines;
     std::vector<Point> clears;
+    uint32_t numValidSolutions;
 
     bool isMine(Point p) const
     {

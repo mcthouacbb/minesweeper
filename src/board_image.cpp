@@ -51,7 +51,7 @@ std::ostream& operator<<(std::ostream& os, const BoardImage& boardImage)
     return os;
 }
 
-std::string BoardImage::renderSolution(const Solution& solution) const
+std::string BoardImage::renderSolution(const SolutionInfo& solution) const
 {
     std::ostringstream oss;
     for (uint32_t y = 0; y < height(); y++)
@@ -82,9 +82,52 @@ std::string BoardImage::renderSolution(const Solution& solution) const
         oss << '\n';
     }
     oss << "Solution Render size: " << width() << " x " << height() << "\n";
+    oss << "Number of counted solutions: " << solution.numValidSolutions << "\n";
     oss << "Total number of mines: " << numMines() << "\n";
     oss << "    Known mines: " << solution.mines.size() << "\n";
     oss << "    Unknown mines: " << numMines() - solution.mines.size() << "\n";
 
     return oss.str();
+}
+
+BoardImageBuilder::BoardImageBuilder(const BoardData& data)
+    : m_Data(data)
+{
+}
+
+void BoardImageBuilder::addClearedCell(Point location, uint32_t adjacentMines)
+{
+    m_ClearedCells.insert({location, adjacentMines});
+}
+
+BoardImage BoardImageBuilder::build() const
+{
+    constexpr std::pair<int, int> neighborOffsets[] = {
+        {-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}};
+
+    BoardImage result(m_Data);
+
+    for (const auto& [location, adjacentMines] : m_ClearedCells)
+    {
+        if (adjacentMines == 0)
+            result.addZeroCell(location);
+        else
+        {
+            CellInfo cellInfo = {};
+            cellInfo.location = location;
+            cellInfo.adjacentMines = adjacentMines;
+
+            for (const auto offset : neighborOffsets)
+            {
+                Point pt{offset.first + location.x, offset.second + location.y};
+                if (pt.x < 0 || pt.x >= m_Data.width || pt.y < 0 || pt.y >= m_Data.height)
+                    continue;
+                if (m_ClearedCells.count(pt) == 0)
+                    cellInfo.unclearedNeighbors.push_back(pt);
+            }
+
+            result.addNumberedCell(cellInfo);
+        }
+    }
+    return result;
 }

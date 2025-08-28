@@ -1,9 +1,10 @@
 #pragma once
 
-#include "solvers/solution.h"
+#include "solvers/solution_info.h"
 #include "types.h"
 #include "util/static_vector.h"
 #include <ostream>
+#include <unordered_map>
 #include <vector>
 
 struct CellInfo
@@ -30,7 +31,7 @@ public:
 
     const std::vector<CellInfo>& numberedCells() const;
 
-    std::string renderSolution(const Solution& solution) const;
+    std::string renderSolution(const SolutionInfo& solution) const;
 
 private:
     BoardData m_Data;
@@ -69,3 +70,17 @@ inline const std::vector<CellInfo>& BoardImage::numberedCells() const
 {
     return m_NumberedCells;
 }
+
+class BoardImageBuilder
+{
+public:
+    BoardImageBuilder(const BoardData& data);
+
+    void addClearedCell(Point location, uint32_t adjacentMines);
+
+    BoardImage build() const;
+
+private:
+    BoardData m_Data;
+    std::unordered_map<Point, uint32_t, PointHash> m_ClearedCells;
+};

@@ -11,7 +11,7 @@ project(Minesweeper)
 
 set(SRCS
     "src/solvers/brute_force.h"
-    "src/solvers/solution.h"
+    "src/solvers/solution_info.h"
 
     "src/util/bitset.h"
     "src/util/static_vector.h"

@@ -2,7 +2,7 @@
 
 #include "../board_image.h"
 #include "../util/bitset.h"
-#include "solution.h"
+#include "solution_info.h"
 
 #include <bit>
 #include <iostream>
@@ -23,7 +23,7 @@ struct Constraint
     }
 };
 
-inline std::optional<Solution> solve(const BoardImage& image)
+inline std::optional<SolutionInfo> solve(const BoardImage& image)
 {
     std::unordered_map<Point, uint32_t, PointHash> unclearedIndices;
     std::vector<Point> uncleared;
@@ -56,6 +56,8 @@ inline std::optional<Solution> solve(const BoardImage& image)
 
     uint64_t alwaysMines = (1ull << uncleared.size()) - 1;
     uint64_t alwaysClear = (1ull << uncleared.size()) - 1;
+    SolutionInfo solution = {};
+
     for (uint64_t mines = 0; mines < 1ull << uncleared.size(); mines++)
     {
         bool valid = true;
@@ -70,11 +72,10 @@ inline std::optional<Solution> solve(const BoardImage& image)
         if (!valid)
             continue;
 
+        solution.numValidSolutions++;
         alwaysMines &= mines;
         alwaysClear &= ~mines;
     }
-
-    Solution solution = {};
 
     while (alwaysMines)
     {
