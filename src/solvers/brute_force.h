@@ -2,6 +2,7 @@
 
 #include "../board_image.h"
 #include "../util/bitset.h"
+#include "solution.h"
 
 #include <bit>
 #include <iostream>
@@ -21,7 +22,7 @@ struct Constraint
     }
 };
 
-void solve(const BoardImage& image)
+Solution solve(const BoardImage& image)
 {
     std::unordered_map<Point, uint32_t, PointHash> unclearedIndices;
     std::vector<Point> uncleared;
@@ -53,7 +54,7 @@ void solve(const BoardImage& image)
     {
         std::cerr << uncleared.size() << " is Too many uncleared mines for brute force solver"
                   << std::endl;
-        return;
+        return {};
     }
 
     uint64_t alwaysMines = (1ull << uncleared.size()) - 1;
@@ -76,31 +77,21 @@ void solve(const BoardImage& image)
         alwaysClear &= ~mines;
     }
 
-    if (!alwaysMines)
+    Solution solution = {};
+
+    while (alwaysMines)
     {
-        std::cout << "No squares are always mines" << std::endl;
-    }
-    else
-    {
-        while (alwaysMines)
-        {
-            int mine = poplsb(alwaysMines);
-            std::cout << "Square " << uncleared[mine] << " is always a mine" << std::endl;
-        }
+        int mine = poplsb(alwaysMines);
+        solution.mines.push_back(uncleared[mine]);
     }
 
-    if (!alwaysClear)
+    while (alwaysClear)
     {
-        std::cout << "No squares are always clear" << std::endl;
+        int clear = poplsb(alwaysClear);
+        solution.clears.push_back(uncleared[clear]);
     }
-    else
-    {
-        while (alwaysClear)
-        {
-            int clear = poplsb(alwaysClear);
-            std::cout << "Square " << uncleared[clear] << " is always clear" << std::endl;
-        }
-    }
+
+    return solution;
 }
 
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "solvers/solution.h"
 #include "types.h"
 #include "util/static_vector.h"
 #include <ostream>
@@ -28,6 +29,8 @@ public:
     uint32_t numMines() const;
 
     const std::vector<CellInfo>& numberedCells() const;
+
+    std::string renderSolution(const Solution& solution) const;
 
 private:
     BoardData m_Data;

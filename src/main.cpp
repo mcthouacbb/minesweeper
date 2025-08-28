@@ -9,24 +9,29 @@ int main()
     std::cout << board << std::endl;
     std::cout << board.genImage() << std::endl;
 
-    solvers::brute_force::solve(board.genImage());
+    std::cout << board.genImage().renderSolution(solvers::brute_force::solve(board.genImage()))
+              << std::endl;
 
     board.makeMove({7, 6});
     std::cout << board << std::endl;
     std::cout << board.genImage() << std::endl;
 
-    solvers::brute_force::solve(board.genImage());
+    std::cout << board.genImage().renderSolution(solvers::brute_force::solve(board.genImage()))
+              << std::endl;
 
     board.makeMove({4, 4});
     std::cout << board << std::endl;
     std::cout << board.genImage() << std::endl;
 
-    solvers::brute_force::solve(board.genImage());
+    std::cout << board.genImage().renderSolution(solvers::brute_force::solve(board.genImage()))
+              << std::endl;
 
     board.makeMove({11, 9});
     std::cout << board << std::endl;
     std::cout << board.genImage() << std::endl;
 
-    solvers::brute_force::solve(board.genImage());
+    std::cout << board.genImage().renderSolution(solvers::brute_force::solve(board.genImage()))
+              << std::endl;
+
     return 0;
 }
