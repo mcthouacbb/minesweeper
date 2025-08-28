@@ -29,6 +29,9 @@ void run_test_suite(TestSuite suite)
 
         BoardImage image = builder.build();
         SolutionInfo solution = solvers::brute_force::solve(image).value();
+
+        std::cout << image.renderSolution(solution) << std::endl;
+
         if (pos.solutionInfo.numValidSolutions != solution.numValidSolutions)
         {
             std::cout << "Failed: number of valid mine configurations does not match" << std::endl;

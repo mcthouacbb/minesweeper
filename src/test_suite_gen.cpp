@@ -83,8 +83,8 @@ std::string getTestPosStr(const BoardImage& image, const SolutionInfo& solutionI
 
 void generateTestSuite()
 {
-    std::random_device rd;
-    auto seed = rd();
+    // std::random_device rd;
+    auto seed = 1913514044; // rd();
     std::mt19937 gen(seed);
     std::cout << "Seed for generating test suite: " << seed << std::endl;
     // std::mt19937 gen(283473842);
