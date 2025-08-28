@@ -6,6 +6,7 @@
 
 #include <bit>
 #include <iostream>
+#include <optional>
 #include <unordered_map>
 
 namespace solvers::brute_force
@@ -22,7 +23,7 @@ struct Constraint
     }
 };
 
-Solution solve(const BoardImage& image)
+inline std::optional<Solution> solve(const BoardImage& image)
 {
     std::unordered_map<Point, uint32_t, PointHash> unclearedIndices;
     std::vector<Point> uncleared;
@@ -51,11 +52,7 @@ Solution solve(const BoardImage& image)
     }
 
     if (uncleared.size() >= 40)
-    {
-        std::cerr << uncleared.size() << " is Too many uncleared mines for brute force solver"
-                  << std::endl;
         return {};
-    }
 
     uint64_t alwaysMines = (1ull << uncleared.size()) - 1;
     uint64_t alwaysClear = (1ull << uncleared.size()) - 1;
@@ -91,7 +88,7 @@ Solution solve(const BoardImage& image)
         solution.clears.push_back(uncleared[clear]);
     }
 
-    return solution;
+    return {solution};
 }
 
 }
