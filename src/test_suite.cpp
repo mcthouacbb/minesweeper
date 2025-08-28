@@ -4,6 +4,20 @@
 
 #include <unordered_set>
 
+TestPosition TestPosition::fromImage(const BoardImage& image, const SolutionInfo& solution)
+{
+    TestPosition result = {};
+    result.data = {image.width(), image.height(), image.numMines()};
+    result.solutionInfo = solution;
+    for (Point zeroCell : image.zeroCells())
+        result.clearedCells.push_back({zeroCell, 0});
+
+    for (auto [location, adjacentMines, unclearedNeighbors] : image.numberedCells())
+        result.clearedCells.push_back({location, adjacentMines});
+
+    return result;
+}
+
 void run_test_suite(TestSuite suite)
 {
     const std::vector<TestPosition>& positions = [&]()

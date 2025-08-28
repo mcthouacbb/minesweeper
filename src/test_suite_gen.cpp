@@ -18,34 +18,25 @@ void clearRandomCell(Board& board, std::mt19937& gen)
     } while (result != MoveResult::CLEAR);
 }
 
-std::string getTestPosStr(const BoardImage& image, const SolutionInfo& solutionInfo)
+std::string getTestPosStr(const TestPosition& testPos)
 {
     std::string result = "    {\n";
     result += "        {";
-    result += std::to_string(image.width()) + ", ";
-    result += std::to_string(image.height()) + ", ";
-    result += std::to_string(image.numMines()) + "},\n";
+    result += std::to_string(testPos.data.width) + ", ";
+    result += std::to_string(testPos.data.height) + ", ";
+    result += std::to_string(testPos.data.numMines) + "},\n";
 
     result += "        {";
     bool first = true;
-    for (Point zeroCell : image.zeroCells())
-    {
-        if (!first)
-            result += ", ";
-        result += "{{";
-        result += std::to_string(zeroCell.x) + ", ";
-        result += std::to_string(zeroCell.y) + "}, 0}";
-        first = false;
-    }
 
-    for (CellInfo numberedCell : image.numberedCells())
+    for (auto [location, adjacentMines] : testPos.clearedCells)
     {
         if (!first)
             result += ", ";
         result += "{{";
-        result += std::to_string(numberedCell.location.x) + ", ";
-        result += std::to_string(numberedCell.location.y) + "}, ";
-        result += std::to_string(numberedCell.adjacentMines) + "}";
+        result += std::to_string(location.x) + ", ";
+        result += std::to_string(location.y) + "}, ";
+        result += std::to_string(adjacentMines) + "}";
         first = false;
     }
     result += "},\n";
@@ -53,7 +44,7 @@ std::string getTestPosStr(const BoardImage& image, const SolutionInfo& solutionI
     result += "        {\n";
     result += "            {";
     first = true;
-    for (Point mine : solutionInfo.mines)
+    for (Point mine : testPos.solutionInfo.mines)
     {
         if (!first)
             result += ", ";
@@ -65,7 +56,7 @@ std::string getTestPosStr(const BoardImage& image, const SolutionInfo& solutionI
     result += "},\n";
     result += "            {";
     first = true;
-    for (Point clear : solutionInfo.clears)
+    for (Point clear : testPos.solutionInfo.clears)
     {
         if (!first)
             result += ", ";
@@ -75,10 +66,26 @@ std::string getTestPosStr(const BoardImage& image, const SolutionInfo& solutionI
         first = false;
     }
     result += "},\n";
-    result += "            " + std::to_string(solutionInfo.numValidSolutions) + "\n        }\n";
+    result += "            " + std::to_string(testPos.solutionInfo.numValidSolutions) + "\n        }\n";
     result += "    }";
 
     return result;
+}
+
+std::string generateTestSuiteStr(const std::vector<TestPosition>& cases, std::string name)
+{
+    std::string result = "std::vector<TestPosition> " + name + " = {";
+
+    bool first = true;
+    for (const auto& testPos : cases)
+    {
+        if (!first)
+            result += ",";
+        result += "\n" + getTestPosStr(testPos);
+        first = false;
+    }
+
+    return result + "\n};\n";
 }
 
 void generateTestSuite()
@@ -88,9 +95,13 @@ void generateTestSuite()
     std::mt19937 gen(seed);
     std::cout << "Seed for generating test suite: " << seed << std::endl;
     // std::mt19937 gen(283473842);
-    std::string easyCases = "std::vector<TestPosition> easyCases = {";
-    std::string mediumCases = "std::vector<TestPosition> mediumCases = {";
-    std::string hardCases = "std::vector<TestPosition> hardCases = {";
+    // std::string easyCases = "std::vector<TestPosition> easyCases = {";
+    // std::string mediumCases = "std::vector<TestPosition> mediumCases = {";
+    // std::string hardCases = "std::vector<TestPosition> hardCases = {";
+
+    std::vector<TestPosition> easyCases;
+    std::vector<TestPosition> mediumCases;
+    std::vector<TestPosition> hardCases;
 
     for (uint32_t i = 0; i < 100; i++)
     {
@@ -122,35 +133,25 @@ void generateTestSuite()
         double seconds = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count();
         std::cout << "Took " << seconds << " seconds to find the solution: ";
 
-        std::string& result = [&]() -> std::string&
+        if (seconds < 0.1)
         {
-            if (seconds < 0.1)
-            {
-                std::cout << "easy solve" << std::endl;
-                return easyCases;
-            }
-            else if (seconds < 1)
-            {
-                std::cout << "medium solve" << std::endl;
-                return mediumCases;
-            }
-            else
-            {
-                std::cout << "hard solve" << std::endl;
-                return hardCases;
-            }
-        }();
-
-        if (i > 0)
-            result += ",";
-        result += "\n" + getTestPosStr(image, solution.value());
+            std::cout << "easy solve" << std::endl;
+            easyCases.push_back(TestPosition::fromImage(image, solution.value()));
+        }
+        else if (seconds < 1)
+        {
+            std::cout << "medium solve" << std::endl;
+            mediumCases.push_back(TestPosition::fromImage(image, solution.value()));
+        }
+        else
+        {
+            std::cout << "hard solve" << std::endl;
+            hardCases.push_back(TestPosition::fromImage(image, solution.value()));
+        }
 
         std::cout << std::endl;
     }
-    easyCases += "\n};\n";
-    mediumCases += "\n};\n";
-    hardCases += "\n};\n";
-    std::cout << easyCases << std::endl;
-    std::cout << mediumCases << std::endl;
-    std::cout << hardCases << std::endl;
+    std::cout << generateTestSuiteStr(easyCases, "easyCases") << std::endl;
+    std::cout << generateTestSuiteStr(mediumCases, "mediumCases") << std::endl;
+    std::cout << generateTestSuiteStr(hardCases, "hardCases") << std::endl;
 }
