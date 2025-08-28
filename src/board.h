@@ -3,6 +3,7 @@
 #include "board_image.h"
 #include <cstdint>
 #include <ostream>
+#include <random>
 #include <vector>
 
 enum class CellState : uint8_t
@@ -24,6 +25,7 @@ class Board
 public:
     Board(uint32_t width, uint32_t height);
 
+    void genMines(uint32_t numMines, std::mt19937& gen);
     void genMines(uint32_t numMines);
     MoveResult makeMove(Point move);
 
@@ -31,6 +33,7 @@ public:
     uint32_t width() const;
     uint32_t height() const;
     uint32_t numMines() const;
+    uint32_t numCleared() const;
     BoardImage genImage() const;
 
 private:
@@ -60,4 +63,17 @@ inline uint32_t Board::height() const
 inline uint32_t Board::numMines() const
 {
     return m_Data.numMines;
+}
+
+inline uint32_t Board::numCleared() const
+{
+    uint32_t count = 0;
+    for (uint32_t y = 0; y < height(); y++)
+    {
+        for (uint32_t x = 0; x < width(); x++)
+        {
+            count += cell({x, y}) == CellState::CLEARED;
+        }
+    }
+    return count;
 }

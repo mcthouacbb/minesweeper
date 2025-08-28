@@ -21,6 +21,8 @@ set(SRCS
     "src/board.cpp"
     "src/board.h"
     "src/main.cpp"
+    "src/test_suite_gen.cpp"
+    "src/test_suite_gen.h"
     "src/types.h"
 )
 
