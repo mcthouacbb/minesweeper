@@ -1,9 +1,10 @@
 #pragma once
 
-#include <vector>
-#include <ostream>
+#include "solvers/solution.h"
 #include "types.h"
 #include "util/static_vector.h"
+#include <ostream>
+#include <vector>
 
 struct CellInfo
 {
@@ -26,6 +27,11 @@ public:
     uint32_t width() const;
     uint32_t height() const;
     uint32_t numMines() const;
+
+    const std::vector<CellInfo>& numberedCells() const;
+
+    std::string renderSolution(const Solution& solution) const;
+
 private:
     BoardData m_Data;
     std::vector<CellInfo> m_NumberedCells;
@@ -57,4 +63,9 @@ inline uint32_t BoardImage::height() const
 inline uint32_t BoardImage::numMines() const
 {
     return m_Data.numMines;
+}
+
+inline const std::vector<CellInfo>& BoardImage::numberedCells() const
+{
+    return m_NumberedCells;
 }

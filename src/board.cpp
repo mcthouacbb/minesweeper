@@ -1,13 +1,13 @@
 #include "board.h"
-#include <random>
 #include <algorithm>
-#include <numeric>
 #include <iterator>
+#include <numeric>
+#include <random>
+
 
 Board::Board(uint32_t width, uint32_t height)
     : m_Data{width, height}, m_Cells(width * height, CellState::UNCLEARED)
 {
-
 }
 
 void Board::genMines(uint32_t numMines)
@@ -33,13 +33,12 @@ MoveResult Board::makeMove(Point move)
         return MoveResult::MINE;
 
     clearCells(move);
-    
+
     return MoveResult::CLEAR;
 }
 
 constexpr std::pair<int, int> neighborOffsets[] = {
-    {-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}
-};
+    {-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}};
 
 void Board::clearCells(Point location)
 {
@@ -62,7 +61,7 @@ void Board::clearCells(Point location)
     }
     if (hasAdjacentMine)
         return;
-        
+
     for (auto offset : neighborOffsets)
     {
         Point pt{offset.first + location.x, offset.second + location.y};
@@ -110,15 +109,15 @@ std::ostream& operator<<(std::ostream& os, const Board& board)
         {
             switch (board.cell({x, y}))
             {
-            case CellState::MINE:
-                os << 'X';
-                break;
-            case CellState::CLEARED:
-                os << '.';
-                break;
-            case CellState::UNCLEARED:
-                os << 'O';
-                break;
+                case CellState::MINE:
+                    os << 'X';
+                    break;
+                case CellState::CLEARED:
+                    os << '.';
+                    break;
+                case CellState::UNCLEARED:
+                    os << 'O';
+                    break;
             }
         }
         os << '\n';
