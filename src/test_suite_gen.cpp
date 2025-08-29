@@ -1,5 +1,5 @@
 #include "board.h"
-#include "solvers/brute_force.h"
+#include "solvers/basic_optimized.h"
 #include "test_suite.h"
 
 #include <chrono>
@@ -90,20 +90,16 @@ std::string generateTestSuiteStr(const std::vector<TestPosition>& cases, std::st
 
 void generateTestSuite()
 {
-    // std::random_device rd;
-    auto seed = 1913514044; // rd();
+    std::random_device rd;
+    // auto seed = rd();
+    auto seed = 3922891087;
     std::mt19937 gen(seed);
     std::cout << "Seed for generating test suite: " << seed << std::endl;
-    // std::mt19937 gen(283473842);
-    // std::string easyCases = "std::vector<TestPosition> easyCases = {";
-    // std::string mediumCases = "std::vector<TestPosition> mediumCases = {";
-    // std::string hardCases = "std::vector<TestPosition> hardCases = {";
-
     std::vector<TestPosition> easyCases;
     std::vector<TestPosition> mediumCases;
     std::vector<TestPosition> hardCases;
 
-    for (uint32_t i = 0; i < 100; i++)
+    for (uint32_t i = 0; i < 20; i++)
     {
         Board board{15, 15};
         board.genMines(40, gen);
@@ -115,23 +111,30 @@ void generateTestSuite()
         BoardImage image = board.genImage();
 
         auto t1 = std::chrono::steady_clock::now();
-        auto solution = solvers::brute_force::solve(image);
+        auto solution = solvers::basic_optimized::solve(image);
         auto t2 = std::chrono::steady_clock::now();
 
         if (!solution.has_value())
         {
             // std::cout << image;
-            std::cout << "Solution will take too long, skipping" << std::endl;
+            std::cout << "Too many unsolved nodes in the solution, skipping (needs bigint fr)"
+                      << std::endl;
             i--;
             continue;
         }
-        else
-        {
-            std::cout << image.renderSolution(solution.value());
-        }
 
         double seconds = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count();
-        std::cout << "Took " << seconds << " seconds to find the solution: ";
+
+        if (seconds < 0.01)
+        {
+            std::cout << "Took " << seconds << " seconds to find the solution: too easy, skipping"
+                      << std::endl;
+            i--;
+            continue;
+        }
+
+        std::cout << image.renderSolution(solution.value());
+        std::cout << "Took " << seconds << " seconds to find the solution" << std::endl;
 
         if (seconds < 0.1)
         {
