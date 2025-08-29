@@ -1,6 +1,5 @@
 #include "test_suite.h"
 #include "raw_test_data.h"
-#include "solvers/brute_force.h"
 
 #include <chrono>
 #include <unordered_set>
@@ -19,7 +18,7 @@ TestPosition TestPosition::fromImage(const BoardImage& image, const SolutionInfo
     return result;
 }
 
-void run_test_suite(TestSuite suite)
+void run_test_suite(TestSuite suite, Solver solver)
 {
     const std::vector<TestPosition>& positions = [&]()
     {
@@ -45,7 +44,7 @@ void run_test_suite(TestSuite suite)
             builder.addClearedCell(location, adjacentMines);
 
         BoardImage image = builder.build();
-        SolutionInfo solution = solvers::brute_force::solve(image).value();
+        SolutionInfo solution = solver(image).value();
 
         std::cout << image.renderSolution(solution) << std::endl;
 

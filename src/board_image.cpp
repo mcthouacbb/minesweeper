@@ -1,5 +1,7 @@
 #include "board_image.h"
 
+#include "solvers/solution_info.h"
+
 #include <sstream>
 
 BoardImage::BoardImage(const BoardData& data)

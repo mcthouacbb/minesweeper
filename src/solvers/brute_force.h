@@ -5,8 +5,6 @@
 #include "solution_info.h"
 
 #include <bit>
-#include <iostream>
-#include <optional>
 #include <unordered_map>
 
 namespace solvers::brute_force
@@ -23,8 +21,10 @@ struct Constraint
     }
 };
 
-inline std::optional<SolutionInfo> solve(const BoardImage& image, uint32_t maxUncleared = 35)
+inline std::optional<SolutionInfo> solve(const BoardImage& image)
 {
+    constexpr uint32_t MAX_UNCLEARED = 35;
+
     std::unordered_map<Point, uint32_t, PointHash> unclearedIndices;
     std::vector<Point> uncleared;
     std::vector<Constraint> constraints;
@@ -51,7 +51,7 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image, uint32_t maxUn
         constraints.push_back(constraint);
     }
 
-    if (uncleared.size() >= maxUncleared)
+    if (uncleared.size() >= MAX_UNCLEARED)
         return {};
 
     uint64_t alwaysMines = (1ull << uncleared.size()) - 1;

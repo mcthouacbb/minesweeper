@@ -1,4 +1,5 @@
 #include "board.h"
+#include "solvers/basic_optimized.h"
 #include "solvers/brute_force.h"
 #include "test_suite.h"
 #include "test_suite_gen.h"
@@ -80,9 +81,13 @@ int main()
 
     // generateTestSuite();
 
-    run_test_suite(TestSuite::EASY);
-    run_test_suite(TestSuite::MEDIUM);
-    run_test_suite(TestSuite::HARD);
+    run_test_suite(TestSuite::EASY, solvers::basic_optimized::solve);
+    run_test_suite(TestSuite::MEDIUM, solvers::basic_optimized::solve);
+    run_test_suite(TestSuite::HARD, solvers::basic_optimized::solve);
+
+    // run_test_suite(TestSuite::EASY, solvers::brute_force::solve);
+    // run_test_suite(TestSuite::MEDIUM, solvers::brute_force::solve);
+    // run_test_suite(TestSuite::HARD, solvers::brute_force::solve);
 
     return 0;
 }

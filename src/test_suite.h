@@ -19,4 +19,4 @@ enum class TestSuite
     HARD
 };
 
-void run_test_suite(TestSuite suite);
+void run_test_suite(TestSuite suite, Solver solver);

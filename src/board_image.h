@@ -1,11 +1,12 @@
 #pragma once
 
-#include "solvers/solution_info.h"
 #include "types.h"
 #include "util/static_vector.h"
 #include <ostream>
 #include <unordered_map>
 #include <vector>
+
+struct SolutionInfo;
 
 struct CellInfo
 {
