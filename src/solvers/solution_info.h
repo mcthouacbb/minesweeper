@@ -1,7 +1,10 @@
 #pragma once
 
+#include <functional>
+#include <optional>
 #include <vector>
 
+#include "../board_image.h"
 #include "../types.h"
 
 struct SolutionInfo
@@ -30,3 +33,5 @@ struct SolutionInfo
         return false;
     }
 };
+
+using Solver = std::function<std::optional<SolutionInfo>(const BoardImage& image)>;

@@ -80,9 +80,9 @@ int main()
 
     // generateTestSuite();
 
-    run_test_suite(TestSuite::EASY);
-    run_test_suite(TestSuite::MEDIUM);
-    run_test_suite(TestSuite::HARD);
+    run_test_suite(TestSuite::EASY, solvers::brute_force::solve);
+    run_test_suite(TestSuite::MEDIUM, solvers::brute_force::solve);
+    run_test_suite(TestSuite::HARD, solvers::brute_force::solve);
 
     return 0;
 }
