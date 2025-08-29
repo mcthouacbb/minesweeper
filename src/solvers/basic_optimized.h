@@ -105,23 +105,30 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
     uint64_t alwaysClear = (1ull << uncleared.size()) - 1;
     SolutionInfo solution = {};
 
-    for (uint64_t mines = 0; mines < 1ull << uncleared.size(); mines++)
+    for (uint64_t mines = 0; mines < 1ull << uncleared.size();)
     {
+        int jumpBit = 0;
         bool valid = true;
         for (const auto& constraint : constraints)
         {
             if (std::popcount(constraint.mask & mines) != constraint.sum)
             {
                 valid = false;
-                break;
+                jumpBit = std::max(jumpBit, std::countr_zero(constraint.mask));
             }
         }
         if (!valid)
+        {
+            mines &= ~((1ull << jumpBit) - 1);
+            mines += 1ull << jumpBit;
             continue;
+        }
 
         solution.numValidSolutions++;
         alwaysMines &= mines;
         alwaysClear &= ~mines;
+
+        mines++;
     }
 
     while (alwaysMines)
