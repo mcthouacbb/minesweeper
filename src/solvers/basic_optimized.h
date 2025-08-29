@@ -13,7 +13,7 @@ namespace solvers::basic_optimized
 
 inline std::optional<SolutionInfo> solve(const BoardImage& image)
 {
-    constexpr uint32_t MAX_UNCLEARED = 35;
+    constexpr uint32_t MAX_UNCLEARED = 64;
 
     std::unordered_map<Point, bool, PointHash> earlySolves;
 
