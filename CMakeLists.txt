@@ -10,6 +10,7 @@ endif()
 project(Minesweeper)
 
 set(SRCS
+    "src/solvers/basic_optimized.h"
     "src/solvers/brute_force.h"
     "src/solvers/solution_info.h"
 
