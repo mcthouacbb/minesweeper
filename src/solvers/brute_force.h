@@ -10,6 +10,7 @@
 namespace solvers::brute_force
 {
 
+// a constraint represents a single numbered cell
 struct Constraint
 {
     uint64_t mask;
@@ -25,6 +26,8 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
 {
     constexpr uint32_t MAX_UNCLEARED = 35;
 
+    // bookkeeping information
+    // each unknown cell is assigned an index
     std::unordered_map<Point, uint32_t, PointHash> unclearedIndices;
     std::vector<Point> uncleared;
     std::vector<Constraint> constraints;
@@ -51,6 +54,7 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
         constraints.push_back(constraint);
     }
 
+    // avoid trying to brute force with too large of a state space
     if (uncleared.size() >= MAX_UNCLEARED)
         return {};
 
@@ -58,11 +62,14 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
     uint64_t alwaysClear = (1ull << uncleared.size()) - 1;
     SolutionInfo solution = {};
 
+    // loop through all possible mine configurations
+    // bits of the number represent whether a cell is a mine or clear
     for (uint64_t mines = 0; mines < 1ull << uncleared.size(); mines++)
     {
         bool valid = true;
         for (const auto& constraint : constraints)
         {
+            // skip this configuration if it does not match the constraints
             if (std::popcount(constraint.mask & mines) != constraint.sum)
             {
                 valid = false;
@@ -73,10 +80,12 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
             continue;
 
         solution.numValidSolutions++;
+        // keep track of which cells were always mines/always clear
         alwaysMines &= mines;
         alwaysClear &= ~mines;
     }
 
+    // convert back from indices to squares
     while (alwaysMines)
     {
         int mine = poplsb(alwaysMines);

@@ -17,6 +17,17 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
 
     std::unordered_map<Point, bool, PointHash> earlySolves;
 
+    // solve trivially recognizable cases
+    // guaranteed mine
+    // ..O
+    // .1.
+    // ...
+
+    // X = mine
+    // guaranteed clear
+    // ..X
+    // .1O
+    // ..O
     while (true)
     {
         bool foundSolve = false;
@@ -65,6 +76,8 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
             break;
     }
 
+    // bookkeeping information
+    // each unknown cell is assigned an index
     std::unordered_map<Point, uint32_t, PointHash> unclearedIndices;
     std::vector<Point> uncleared;
     std::vector<brute_force::Constraint> constraints;
@@ -105,12 +118,19 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
     uint64_t alwaysClear = (1ull << uncleared.size()) - 1;
     SolutionInfo solution = {};
 
+    // loop through all possible mine configurations
+    // bits of the number represent whether a cell is a mine or clear
     for (uint64_t mines = 0; mines < 1ull << uncleared.size();)
     {
         int jumpBit = 0;
         bool valid = true;
+        // skip invalid configurations
+        // If a constraint is unmatched, we don't need to check any of the
+        // configurations that don't change the lowest index bit in that constraint
+        // so we can skip all configurations that don't change the lowest bit in the constraint
         for (const auto& constraint : constraints)
         {
+            // keep track of the constraint with the highest lowest index bit
             if (std::popcount(constraint.mask & mines) != constraint.sum)
             {
                 valid = false;
@@ -119,18 +139,21 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
         }
         if (!valid)
         {
+            // skip configurations that can't possibly satisfy the constraints
             mines &= ~((1ull << jumpBit) - 1);
             mines += 1ull << jumpBit;
             continue;
         }
 
         solution.numValidSolutions++;
+        // keep track of which cells were always mines/always clear
         alwaysMines &= mines;
         alwaysClear &= ~mines;
 
         mines++;
     }
 
+    // convert back from indices to squares
     while (alwaysMines)
     {
         int mine = poplsb(alwaysMines);
