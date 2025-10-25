@@ -157,6 +157,11 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
         alwaysMines &= mines;
         alwaysClear &= ~mines;
 
+        // Adjust weight for the current mine configuration based on
+        // the number of valid ways other mines can be configured
+        // weight is proportional to N choose M, where N is
+        // the number of other squares that mines can be in
+        // and M is the number of mines that can be in those squares
         double currWeight = 1.0;
         for (uint32_t i = 0; i < std::popcount(mines); i++)
         {
