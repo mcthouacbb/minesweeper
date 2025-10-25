@@ -16,6 +16,7 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
     constexpr uint32_t MAX_UNCLEARED = 64;
 
     std::unordered_map<Point, bool, PointHash> earlySolves;
+    uint32_t earlySolvedMines = 0;
 
     // solve trivially recognizable cases
     // guaranteed mine
@@ -55,6 +56,7 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
                     {
                         foundSolve = true;
                         earlySolves.insert({neighbor, true});
+                        earlySolvedMines++;
                     }
                 }
             }
@@ -117,9 +119,14 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
     uint64_t alwaysMines = (1ull << uncleared.size()) - 1;
     uint64_t alwaysClear = (1ull << uncleared.size()) - 1;
     SolutionInfo solution = {};
+    solution.initMineProbs(uncleared);
 
     // loop through all possible mine configurations
     // bits of the number represent whether a cell is a mine or clear
+    double totalWeight = 0.0;
+    const uint32_t outsideMineCells = image.width() * image.height() - uncleared.size()
+        - earlySolves.size() - image.zeroCells().size() - image.numberedCells().size();
+    const uint32_t availableMines = image.numMines() - earlySolvedMines;
     for (uint64_t mines = 0; mines < 1ull << uncleared.size();)
     {
         int jumpBit = 0;
@@ -150,6 +157,24 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
         alwaysMines &= mines;
         alwaysClear &= ~mines;
 
+        double currWeight = 1.0;
+        for (uint32_t i = 0; i < std::popcount(mines); i++)
+        {
+            currWeight *= static_cast<double>(availableMines - i);
+            currWeight /= static_cast<double>(outsideMineCells + 1 + i - availableMines);
+        }
+
+        totalWeight += currWeight;
+
+        uint32_t minesCopy = mines;
+        while (minesCopy > 0)
+        {
+            uint32_t mineIdx = std::countr_zero(minesCopy);
+            solution.mineProbs[mineIdx].prob += currWeight;
+
+            minesCopy &= minesCopy - 1;
+        }
+
         mines++;
     }
 
@@ -173,6 +198,17 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
         else
             solution.clears.push_back(location);
     }
+
+    const auto remove = [&](const SolutionInfo::MineProb& mineProb)
+    {
+        return solution.isClear(mineProb.point) || solution.isMine(mineProb.point);
+    };
+    solution.mineProbs.erase(
+        std::remove_if(solution.mineProbs.begin(), solution.mineProbs.end(), remove),
+        solution.mineProbs.end());
+
+    for (auto& mineProb : solution.mineProbs)
+        mineProb.prob /= totalWeight;
 
     return {solution};
 }
