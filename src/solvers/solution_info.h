@@ -9,9 +9,23 @@
 
 struct SolutionInfo
 {
+    struct MineProb
+    {
+        Point point;
+        double prob;
+    };
+
     std::vector<Point> mines;
     std::vector<Point> clears;
     uint32_t numValidSolutions;
+    std::vector<MineProb> mineProbs;
+
+    void initMineProbs(const std::vector<Point>& points)
+    {
+        mineProbs.reserve(points.size());
+        for (Point pt : points)
+            mineProbs.push_back({pt, 0});
+    }
 
     bool isMine(Point p) const
     {
