@@ -25,11 +25,11 @@ void run_test_suite(TestSuite suite, Solver solver, bool verbose)
         switch (suite)
         {
             case TestSuite::EASY:
-                return easyCases;
+                return test_cases::easyCases;
             case TestSuite::MEDIUM:
-                return mediumCases;
+                return test_cases::mediumCases;
             case TestSuite::HARD:
-                return hardCases;
+                return test_cases::hardCases;
             default:
                 throw std::runtime_error("Invalid test case");
         }
