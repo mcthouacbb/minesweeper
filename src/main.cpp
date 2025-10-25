@@ -146,18 +146,18 @@ void simulateGamesProbabilistic(uint32_t width, uint32_t height, uint32_t numMin
     }
     std::cout << "WIDTH: " << width << " HEIGHT: " << height << " MINES: " << numMines
               << " SOLVED: " << toPercentStats(results[0], games)
-              << " TOO_COMPLEX: " << toPercentStats(results[2], games)
-              << " UNSOLVABLE: " << toPercentStats(results[3], games) << std::endl;
+              << " LOSS: " << toPercentStats(results[1], games)
+              << " TOO_COMPLEX: " << toPercentStats(results[2], games) << std::endl;
 }
 
 int main()
 {
-    // simulateGamesDeterministic(9, 9, 10, 5000);
-    // simulateGamesDeterministic(16, 16, 40, 5000);
+    simulateGamesDeterministic(9, 9, 10, 10000);
+    simulateGamesDeterministic(16, 16, 40, 10000);
     // simulateGamesDeterministic(30, 16, 99, 5000);
 
-    simulateGamesProbabilistic(9, 9, 10, 10);
-    simulateGamesProbabilistic(16, 16, 40, 10);
+    simulateGamesProbabilistic(9, 9, 10, 10000);
+    simulateGamesProbabilistic(16, 16, 40, 10000);
     // simulateGamesProbabilistic(30, 16, 99, 5000);
 
     // BoardImageBuilder builder({15, 15, 35});
