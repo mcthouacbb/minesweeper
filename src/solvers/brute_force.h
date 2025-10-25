@@ -61,9 +61,13 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
     uint64_t alwaysMines = (1ull << uncleared.size()) - 1;
     uint64_t alwaysClear = (1ull << uncleared.size()) - 1;
     SolutionInfo solution = {};
+    solution.initMineProbs(uncleared);
 
     // loop through all possible mine configurations
     // bits of the number represent whether a cell is a mine or clear
+    double totalWeight = 0.0;
+    const uint32_t outsideMineCells = image.width() * image.height() - uncleared.size()
+        - image.zeroCells().size() - image.numberedCells().size();
     for (uint64_t mines = 0; mines < 1ull << uncleared.size(); mines++)
     {
         bool valid = true;
@@ -83,6 +87,29 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
         // keep track of which cells were always mines/always clear
         alwaysMines &= mines;
         alwaysClear &= ~mines;
+
+        // Adjust weight for the current mine configuration based on
+        // the number of valid ways other mines can be configured
+        // weight is proportional to N choose M, where N is
+        // the number of other squares that mines can be in
+        // and M is the number of mines that can be in those squares
+        double currWeight = 1.0;
+        for (uint32_t i = 0; i < std::popcount(mines); i++)
+        {
+            currWeight *= static_cast<double>(image.numMines() - i);
+            currWeight /= static_cast<double>(outsideMineCells + 1 + i - image.numMines());
+        }
+
+        totalWeight += currWeight;
+
+        uint32_t minesCopy = mines;
+        while (minesCopy > 0)
+        {
+            uint32_t mineIdx = std::countr_zero(minesCopy);
+            solution.mineProbs[mineIdx].prob += currWeight;
+
+            minesCopy &= minesCopy - 1;
+        }
     }
 
     // convert back from indices to squares
@@ -97,6 +124,17 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
         int clear = poplsb(alwaysClear);
         solution.clears.push_back(uncleared[clear]);
     }
+
+    const auto remove = [&](const SolutionInfo::MineProb& mineProb)
+    {
+        return solution.isClear(mineProb.point) || solution.isMine(mineProb.point);
+    };
+    solution.mineProbs.erase(
+        std::remove_if(solution.mineProbs.begin(), solution.mineProbs.end(), remove),
+        solution.mineProbs.end());
+
+    for (auto& mineProb : solution.mineProbs)
+        mineProb.prob /= totalWeight;
 
     return {solution};
 }

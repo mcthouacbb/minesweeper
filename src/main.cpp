@@ -9,7 +9,7 @@
 
 void tryRenderSolution(const BoardImage& image)
 {
-    if (auto solution = solvers::brute_force::solve(image))
+    if (auto solution = solvers::basic_optimized::solve(image))
         std::cout << image.renderSolution(solution.value()) << std::endl;
     else
         std::cout << "No solution available" << std::endl;
@@ -85,9 +85,9 @@ void simulateGames(uint32_t width, uint32_t height, uint32_t numMines, uint32_t 
 
 int main()
 {
-    simulateGames(9, 9, 10, 5000);
-    simulateGames(16, 16, 40, 5000);
-    simulateGames(30, 16, 99, 5000);
+    // simulateGames(9, 9, 10, 5000);
+    // simulateGames(16, 16, 40, 5000);
+    // simulateGames(30, 16, 99, 5000);
 
     // BoardImageBuilder builder({15, 15, 35});
     // builder.addClearedCell({3, 3}, 0);
@@ -128,13 +128,13 @@ int main()
     // tryRenderSolution(builder2.build());
     // std::cout << builder2.build() << std::endl;
 
-    // generateTestSuite();
+    // regenerateTestSuite();
 
-    // run_test_suite(TestSuite::EASY, solvers::basic_optimized::solve);
-    // run_test_suite(TestSuite::MEDIUM, solvers::basic_optimized::solve);
-    // run_test_suite(TestSuite::HARD, solvers::basic_optimized::solve);
+    run_test_suite(TestSuite::EASY, solvers::basic_optimized::solve);
+    run_test_suite(TestSuite::MEDIUM, solvers::basic_optimized::solve);
+    run_test_suite(TestSuite::HARD, solvers::basic_optimized::solve);
 
-    // run_test_suite(TestSuite::EASY, solvers::brute_force::solve);
+    run_test_suite(TestSuite::EASY, solvers::brute_force::solve);
     // run_test_suite(TestSuite::MEDIUM, solvers::brute_force::solve);
     // run_test_suite(TestSuite::HARD, solvers::brute_force::solve);
 

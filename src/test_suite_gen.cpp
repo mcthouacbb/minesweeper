@@ -1,4 +1,5 @@
 #include "board.h"
+#include "raw_test_data.h"
 #include "solvers/basic_optimized.h"
 #include "test_suite.h"
 
@@ -66,15 +67,30 @@ std::string getTestPosStr(const TestPosition& testPos)
         first = false;
     }
     result += "},\n";
-    result += "            " + std::to_string(testPos.solutionInfo.numValidSolutions) + "\n        }\n";
-    result += "    }";
+    result += "            " + std::to_string(testPos.solutionInfo.numValidSolutions);
+    result += ",\n            {";
+    first = true;
+    for (const auto& mineProb : testPos.solutionInfo.mineProbs)
+    {
+        if (!first)
+            result += ", ";
+        result += "{{";
+        result += std::to_string(mineProb.point.x);
+        result += ", ";
+        result += std::to_string(mineProb.point.y);
+        result += "}, ";
+        result += std::to_string(mineProb.prob);
+        result += "}";
+        first = false;
+    }
+    result += "}\n        }\n    }";
 
     return result;
 }
 
 std::string generateTestSuiteStr(const std::vector<TestPosition>& cases, std::string name)
 {
-    std::string result = "std::vector<TestPosition> " + name + " = {";
+    std::string result = "inline std::vector<TestPosition> " + name + " = {";
 
     bool first = true;
     for (const auto& testPos : cases)
@@ -157,4 +173,26 @@ void generateTestSuite()
     std::cout << generateTestSuiteStr(easyCases, "easyCases") << std::endl;
     std::cout << generateTestSuiteStr(mediumCases, "mediumCases") << std::endl;
     std::cout << generateTestSuiteStr(hardCases, "hardCases") << std::endl;
+}
+
+void regenerateTestSuite(const std::vector<TestPosition>& cases, std::string_view name)
+{
+    std::vector<TestPosition> regeneratedCases = cases;
+    for (auto& pos : regeneratedCases)
+    {
+        BoardImageBuilder builder(pos.data);
+        for (const auto& [location, adjacentMines] : pos.clearedCells)
+            builder.addClearedCell(location, adjacentMines);
+
+        BoardImage image = builder.build();
+        pos.solutionInfo = solvers::basic_optimized::solve(image).value();
+    }
+    std::cout << generateTestSuiteStr(regeneratedCases, std::string{name}) << std::endl;
+}
+
+void regenerateTestSuite()
+{
+    regenerateTestSuite(test_cases::easyCases, "easyCases");
+    regenerateTestSuite(test_cases::mediumCases, "mediumCases");
+    regenerateTestSuite(test_cases::hardCases, "hardCases");
 }
