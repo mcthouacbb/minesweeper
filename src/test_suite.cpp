@@ -80,6 +80,42 @@ void run_test_suite(TestSuite suite, Solver solver, bool verbose)
                       << std::endl;
         }
 
+        const auto createMineProbsMap = [](const SolutionInfo& solution)
+        {
+            std::unordered_map<Point, double, PointHash> result;
+            for (const auto& mineProb : solution.mineProbs)
+                result.insert({mineProb.point, mineProb.prob});
+            return result;
+        };
+
+        std::unordered_map<Point, double, PointHash> expectedMineProbs =
+            createMineProbsMap(pos.solutionInfo);
+        std::unordered_map<Point, double, PointHash> actualMineProbs = createMineProbsMap(solution);
+
+        if (actualMineProbs.size() != expectedMineProbs.size())
+        {
+            passed = false;
+            std::cout << "Failed: mismatching mine probability sizes" << std::endl;
+        }
+        for (auto& [point, prob] : expectedMineProbs)
+        {
+            auto it = actualMineProbs.find(point);
+            if (it == actualMineProbs.end())
+            {
+                passed = false;
+                std::cout << "Failed: no mine probability for point " << point << std::endl;
+            }
+            else
+            {
+                if (std::abs(prob - it->second) > 0.0001)
+                {
+                    passed = false;
+                    std::cout << "Failed: mine probability for point" << point
+                              << " differs: " << prob << " vs " << it->second << std::endl;
+                }
+            }
+        }
+
         numPassed += passed;
         numFailed += !passed;
     }

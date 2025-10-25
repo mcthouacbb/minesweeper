@@ -128,13 +128,13 @@ int main()
     // tryRenderSolution(builder2.build());
     // std::cout << builder2.build() << std::endl;
 
-    regenerateTestSuite();
+    // regenerateTestSuite();
 
-    // run_test_suite(TestSuite::EASY, solvers::basic_optimized::solve);
-    // run_test_suite(TestSuite::MEDIUM, solvers::basic_optimized::solve);
-    // run_test_suite(TestSuite::HARD, solvers::basic_optimized::solve);
+    run_test_suite(TestSuite::EASY, solvers::basic_optimized::solve);
+    run_test_suite(TestSuite::MEDIUM, solvers::basic_optimized::solve);
+    run_test_suite(TestSuite::HARD, solvers::basic_optimized::solve);
 
-    // run_test_suite(TestSuite::EASY, solvers::brute_force::solve);
+    run_test_suite(TestSuite::EASY, solvers::brute_force::solve);
     // run_test_suite(TestSuite::MEDIUM, solvers::brute_force::solve);
     // run_test_suite(TestSuite::HARD, solvers::brute_force::solve);
 
