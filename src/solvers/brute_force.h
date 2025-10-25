@@ -96,6 +96,8 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
         double currWeight = 1.0;
         for (uint32_t i = 0; i < std::popcount(mines); i++)
         {
+            if (outsideMineCells + 1 + i - image.numMines() <= 0)
+                continue;
             currWeight *= static_cast<double>(image.numMines() - i);
             currWeight /= static_cast<double>(outsideMineCells + 1 + i - image.numMines());
         }

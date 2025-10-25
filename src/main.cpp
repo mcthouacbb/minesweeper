@@ -23,7 +23,7 @@ enum class GameResult
     UNSOLVABLE
 };
 
-GameResult simulateGame(uint32_t width, uint32_t height, uint32_t numMines)
+GameResult simulateGameDeterministic(uint32_t width, uint32_t height, uint32_t numMines)
 {
     static std::random_device rd;
     static std::mt19937 gen{rd()};
@@ -58,6 +58,59 @@ GameResult simulateGame(uint32_t width, uint32_t height, uint32_t numMines)
     return GameResult::WIN;
 }
 
+GameResult simulateGameProbabilistic(uint32_t width, uint32_t height, uint32_t numMines)
+{
+    // static std::random_device rd;
+    static std::mt19937 gen{293483 /*rd()*/};
+    Board board{width, height};
+
+    MoveResult moveResult;
+    do
+    {
+        board.genMines(numMines);
+        std::uniform_int_distribution<uint32_t> distW(0, width - 1);
+        std::uniform_int_distribution<uint32_t> distH(0, height - 1);
+        moveResult = board.makeMove(Point{distW(gen), distH(gen)});
+    } while (moveResult == MoveResult::MINE);
+
+    while (board.numCleared() < board.width() * board.height() - board.numMines())
+    {
+        BoardImage image = board.genImage();
+        auto solution = solvers::basic_optimized::solve(image);
+        if (!solution.has_value())
+            return GameResult::TOO_COMPLEX;
+        if (solution->clears.empty())
+        {
+            double lowestProb = 2.0;
+            Point bestPoint = {};
+            for (const auto& mineProb : solution->mineProbs)
+            {
+                if (mineProb.prob < lowestProb)
+                {
+                    lowestProb = mineProb.prob;
+                    bestPoint = mineProb.point;
+                }
+            }
+            MoveResult moveResult = board.makeMove(bestPoint);
+            if (moveResult == MoveResult::MINE)
+                return GameResult::LOSS;
+            if (moveResult == MoveResult::ILLEGAL)
+            {
+                return GameResult::LOSS;
+            }
+        }
+
+        for (Point clear : solution->clears)
+        {
+            MoveResult moveResult = board.makeMove(clear);
+            if (moveResult == MoveResult::MINE)
+                return GameResult::LOSS;
+        }
+    }
+
+    return GameResult::WIN;
+}
+
 std::string toPercentStats(uint32_t success, uint32_t total)
 {
     double frac = static_cast<double>(success) / static_cast<double>(total);
@@ -69,12 +122,12 @@ std::string toPercentStats(uint32_t success, uint32_t total)
     return result.str();
 }
 
-void simulateGames(uint32_t width, uint32_t height, uint32_t numMines, uint32_t games = 100)
+void simulateGamesDeterministic(uint32_t width, uint32_t height, uint32_t numMines, uint32_t games = 100)
 {
     std::array<uint32_t, 4> results = {};
     for (uint32_t simul = 0; simul < games; simul++)
     {
-        GameResult result = simulateGame(width, height, numMines);
+        GameResult result = simulateGameDeterministic(width, height, numMines);
         results[static_cast<uint32_t>(result)]++;
     }
     std::cout << "WIDTH: " << width << " HEIGHT: " << height << " MINES: " << numMines
@@ -83,11 +136,29 @@ void simulateGames(uint32_t width, uint32_t height, uint32_t numMines, uint32_t 
               << " UNSOLVABLE: " << toPercentStats(results[3], games) << std::endl;
 }
 
+void simulateGamesProbabilistic(uint32_t width, uint32_t height, uint32_t numMines, uint32_t games = 100)
+{
+    std::array<uint32_t, 4> results = {};
+    for (uint32_t simul = 0; simul < games; simul++)
+    {
+        GameResult result = simulateGameProbabilistic(width, height, numMines);
+        results[static_cast<uint32_t>(result)]++;
+    }
+    std::cout << "WIDTH: " << width << " HEIGHT: " << height << " MINES: " << numMines
+              << " SOLVED: " << toPercentStats(results[0], games)
+              << " LOSS: " << toPercentStats(results[1], games)
+              << " TOO_COMPLEX: " << toPercentStats(results[2], games) << std::endl;
+}
+
 int main()
 {
-    // simulateGames(9, 9, 10, 5000);
-    // simulateGames(16, 16, 40, 5000);
-    // simulateGames(30, 16, 99, 5000);
+    simulateGamesDeterministic(9, 9, 10, 10000);
+    simulateGamesDeterministic(16, 16, 40, 10000);
+    // simulateGamesDeterministic(30, 16, 99, 5000);
+
+    simulateGamesProbabilistic(9, 9, 10, 10000);
+    simulateGamesProbabilistic(16, 16, 40, 10000);
+    // simulateGamesProbabilistic(30, 16, 99, 5000);
 
     // BoardImageBuilder builder({15, 15, 35});
     // builder.addClearedCell({3, 3}, 0);
@@ -130,11 +201,11 @@ int main()
 
     // regenerateTestSuite();
 
-    run_test_suite(TestSuite::EASY, solvers::basic_optimized::solve);
-    run_test_suite(TestSuite::MEDIUM, solvers::basic_optimized::solve);
-    run_test_suite(TestSuite::HARD, solvers::basic_optimized::solve);
+    // run_test_suite(TestSuite::EASY, solvers::basic_optimized::solve);
+    // run_test_suite(TestSuite::MEDIUM, solvers::basic_optimized::solve);
+    // run_test_suite(TestSuite::HARD, solvers::basic_optimized::solve);
 
-    run_test_suite(TestSuite::EASY, solvers::brute_force::solve);
+    // run_test_suite(TestSuite::EASY, solvers::brute_force::solve);
     // run_test_suite(TestSuite::MEDIUM, solvers::brute_force::solve);
     // run_test_suite(TestSuite::HARD, solvers::brute_force::solve);
 
