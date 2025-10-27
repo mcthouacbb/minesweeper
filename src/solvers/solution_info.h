@@ -19,6 +19,7 @@ struct SolutionInfo
     std::vector<Point> clears;
     uint32_t numValidSolutions;
     std::vector<MineProb> mineProbs;
+    double outsideMineProb;
 
     void initMineProbs(const std::vector<Point>& points)
     {
