@@ -104,6 +104,10 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
 
         totalWeight += currWeight;
 
+        double currOutsideMineProb = static_cast<double>(image.numMines() - std::popcount(mines))
+            / static_cast<double>(outsideMineCells);
+        solution.outsideMineProb += currWeight * currOutsideMineProb;
+
         uint32_t minesCopy = mines;
         while (minesCopy > 0)
         {
@@ -135,6 +139,7 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
         std::remove_if(solution.mineProbs.begin(), solution.mineProbs.end(), remove),
         solution.mineProbs.end());
 
+    solution.outsideMineProb /= totalWeight;
     for (auto& mineProb : solution.mineProbs)
         mineProb.prob /= totalWeight;
 

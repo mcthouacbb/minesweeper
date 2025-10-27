@@ -90,11 +90,9 @@ std::string BoardImage::renderSolution(const SolutionInfo& solution) const
     oss << "    Unknown mines: " << numMines() - solution.mines.size() << "\n";
 
     oss << "Probabilistic results: " << std::endl;
+    oss << "    outside mine probability: " << solution.outsideMineProb << std::endl;
     for (const auto& mineProb : solution.mineProbs)
-    {
-        oss << "    " << mineProb.point << ": " << static_cast<double>(mineProb.prob)
-            << " mine probability" << std::endl;
-    }
+        oss << "    " << mineProb.point << ": " << mineProb.prob << " mine probability" << std::endl;
 
     return oss.str();
 }
