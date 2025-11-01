@@ -61,8 +61,8 @@ GameResult simulateGameDeterministic(uint32_t width, uint32_t height, uint32_t n
 
 GameResult simulateGameProbabilistic(uint32_t width, uint32_t height, uint32_t numMines)
 {
-    // static std::random_device rd;
-    static std::mt19937 gen{293483 /*rd()*/};
+    static std::random_device rd;
+    static std::mt19937 gen{rd()};
     Board board{width, height};
 
     MoveResult moveResult;
