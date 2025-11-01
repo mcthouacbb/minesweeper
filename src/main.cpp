@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <unordered_set>
 
 void tryRenderSolution(const BoardImage& image)
 {
@@ -60,8 +61,8 @@ GameResult simulateGameDeterministic(uint32_t width, uint32_t height, uint32_t n
 
 GameResult simulateGameProbabilistic(uint32_t width, uint32_t height, uint32_t numMines)
 {
-    // static std::random_device rd;
-    static std::mt19937 gen{293483 /*rd()*/};
+    static std::random_device rd;
+    static std::mt19937 gen{rd()};
     Board board{width, height};
 
     MoveResult moveResult;
@@ -83,14 +84,38 @@ GameResult simulateGameProbabilistic(uint32_t width, uint32_t height, uint32_t n
         {
             double lowestProb = 2.0;
             Point bestPoint = {};
+            std::unordered_set<Point, PointHash> mineProbPoints;
             for (const auto& mineProb : solution->mineProbs)
             {
+                mineProbPoints.insert(mineProb.point);
                 if (mineProb.prob < lowestProb)
                 {
                     lowestProb = mineProb.prob;
                     bestPoint = mineProb.point;
                 }
             }
+
+            if (solution->outsideMineProb < lowestProb)
+            {
+                std::vector<Point> outsidePoints = {};
+                for (uint32_t y = 0; y < image.height(); y++)
+                {
+                    for (uint32_t x = 0; x < image.width(); x++)
+                    {
+                        Point point{x, y};
+                        if (image.cellCleared(point) || solution->isClear(point)
+                            || solution->isMine(point) || mineProbPoints.count(point) > 0)
+                        {
+                            continue;
+                        }
+                        outsidePoints.push_back(point);
+                    }
+                }
+                std::uniform_int_distribution<int> dist(0, outsidePoints.size() - 1);
+                int idx = dist(gen);
+                bestPoint = outsidePoints[idx];
+            }
+
             MoveResult moveResult = board.makeMove(bestPoint);
             if (moveResult == MoveResult::MINE)
                 return GameResult::LOSS;
