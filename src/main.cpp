@@ -177,12 +177,12 @@ void simulateGamesProbabilistic(uint32_t width, uint32_t height, uint32_t numMin
 
 int main()
 {
-    simulateGamesDeterministic(9, 9, 10, 10000);
-    simulateGamesDeterministic(16, 16, 40, 10000);
+    // simulateGamesDeterministic(9, 9, 10, 10000);
+    // simulateGamesDeterministic(16, 16, 40, 10000);
     // simulateGamesDeterministic(30, 16, 99, 5000);
 
-    simulateGamesProbabilistic(9, 9, 10, 10000);
-    simulateGamesProbabilistic(16, 16, 40, 10000);
+    // simulateGamesProbabilistic(9, 9, 10, 10000);
+    // simulateGamesProbabilistic(16, 16, 40, 10000);
     // simulateGamesProbabilistic(30, 16, 99, 5000);
 
     // BoardImageBuilder builder({15, 15, 35});
@@ -226,9 +226,9 @@ int main()
 
     // regenerateTestSuite();
 
-    // run_test_suite(TestSuite::EASY, solvers::basic_optimized::solve);
-    // run_test_suite(TestSuite::MEDIUM, solvers::basic_optimized::solve);
-    // run_test_suite(TestSuite::HARD, solvers::basic_optimized::solve);
+    run_test_suite(TestSuite::EASY, solvers::basic_optimized::solve);
+    run_test_suite(TestSuite::MEDIUM, solvers::basic_optimized::solve);
+    run_test_suite(TestSuite::HARD, solvers::basic_optimized::solve);
 
     // run_test_suite(TestSuite::EASY, solvers::brute_force::solve);
     // run_test_suite(TestSuite::MEDIUM, solvers::brute_force::solve);
