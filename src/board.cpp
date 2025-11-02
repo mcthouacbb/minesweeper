@@ -53,7 +53,7 @@ void Board::clearCells(Point location)
     for (auto offset : neighborOffsets)
     {
         Point pt{offset.first + location.x, offset.second + location.y};
-        if (pt.x < 0 || pt.x >= width() || pt.y < 0 || pt.y >= height())
+        if (pt.x >= width() || pt.y >= height())
             continue;
         if (cell(pt) == CellState::MINE)
         {
@@ -67,7 +67,7 @@ void Board::clearCells(Point location)
     for (auto offset : neighborOffsets)
     {
         Point pt{offset.first + location.x, offset.second + location.y};
-        if (pt.x < 0 || pt.x >= width() || pt.y < 0 || pt.y >= height())
+        if (pt.x >= width() || pt.y >= height())
             continue;
         clearCells(pt);
     }
@@ -87,7 +87,7 @@ BoardImage Board::genImage() const
             for (auto offset : neighborOffsets)
             {
                 Point pt{offset.first + x, offset.second + y};
-                if (pt.x < 0 || pt.x >= width() || pt.y < 0 || pt.y >= height())
+                if (pt.x >= width() || pt.y >= height())
                     continue;
                 if (cell(pt) == CellState::MINE)
                     cellInfo.adjacentMines++;

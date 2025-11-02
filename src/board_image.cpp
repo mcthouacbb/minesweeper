@@ -127,7 +127,7 @@ BoardImage BoardImageBuilder::build() const
             for (const auto offset : neighborOffsets)
             {
                 Point pt{offset.first + location.x, offset.second + location.y};
-                if (pt.x < 0 || pt.x >= m_Data.width || pt.y < 0 || pt.y >= m_Data.height)
+                if (pt.x >= m_Data.width || pt.y >= m_Data.height)
                     continue;
                 if (m_ClearedCells.count(pt) == 0)
                     cellInfo.unclearedNeighbors.push_back(pt);
