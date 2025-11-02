@@ -7,6 +7,7 @@
 
 #include <bit>
 #include <unordered_map>
+#include <unordered_set>
 
 namespace solvers::basic_optimized
 {
@@ -16,6 +17,7 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
     constexpr uint32_t MAX_UNCLEARED = 64;
 
     std::unordered_map<Point, bool, PointHash> earlySolves;
+    std::unordered_set<Point, PointHash> earlySolvedNumberCells;
     uint32_t earlySolvedMines = 0;
 
     // solve trivially recognizable cases
@@ -50,6 +52,7 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
             // all cells that are not already known are mines
             if (cell.adjacentMines == cell.unclearedNeighbors.size() - knownClears)
             {
+                earlySolvedNumberCells.insert(cell.location);
                 for (Point neighbor : cell.unclearedNeighbors)
                 {
                     if (earlySolves.count(neighbor) == 0)
@@ -63,6 +66,7 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
             // all cells that are not already known are clear
             else if (cell.adjacentMines == knownMines)
             {
+                earlySolvedNumberCells.insert(cell.location);
                 for (Point neighbor : cell.unclearedNeighbors)
                 {
                     if (earlySolves.count(neighbor) == 0)
@@ -86,6 +90,8 @@ inline std::optional<SolutionInfo> solve(const BoardImage& image)
 
     for (const auto& cell : image.numberedCells())
     {
+        if (earlySolvedNumberCells.count(cell.location) > 0)
+            continue;
         brute_force::Constraint constraint = {};
         uint32_t knownMines = 0;
         for (auto neighbor : cell.unclearedNeighbors)
